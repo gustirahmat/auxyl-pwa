@@ -12,8 +12,12 @@ module.exports = {
 
     theme: {
         extend: {
+            colors: {
+                'auxyl-blue': '#083b66',
+                'auxyl-green': '#74D14C',
+            },
             fontFamily: {
-                sans: ['Nunito', ...defaultTheme.fontFamily.sans],
+                sans: ['Amarante', ...defaultTheme.fontFamily.sans],
             },
         },
     },

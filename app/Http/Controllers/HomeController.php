@@ -20,6 +20,7 @@ class HomeController extends Controller
     public function __invoke(Request $request): Response
     {
         return Inertia::render('Homepage', [
+            'appName' => config('app.name'),
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'categories' => Category::all()->take(2),

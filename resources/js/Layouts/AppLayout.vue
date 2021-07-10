@@ -3,22 +3,25 @@
         <jet-banner />
 
         <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
+            <nav class="bg-auxyl-blue border-b border-auxyl-green">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex-shrink-0 flex items-center">
-                                <inertia-link :href="route('dashboard')">
-                                    <jet-application-mark class="block h-9 w-auto" />
+                                <inertia-link href="/">
+                                    <img class="block h-9 w-auto" src="/manifest/playstore.png" alt="Logo" />
                                 </inertia-link>
                             </div>
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <jet-nav-link :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                <jet-nav-link href="/">
+                                    Beranda
+                                </jet-nav-link>
+                                <jet-nav-link :href="route('profile.show')" :active="route().current('profile.*')">
+                                    Profil Saya
                                 </jet-nav-link>
                             </div>
                         </div>
@@ -101,11 +104,11 @@
                                     <template #content>
                                         <!-- Account Management -->
                                         <div class="block px-4 py-2 text-xs text-gray-400">
-                                            Manage Account
+                                            Pengaturan
                                         </div>
 
                                         <jet-dropdown-link :href="route('profile.show')">
-                                            Profile
+                                            Profil Saya
                                         </jet-dropdown-link>
 
                                         <jet-dropdown-link :href="route('api-tokens.index')" v-if="$page.props.jetstream.hasApiFeatures">
@@ -140,8 +143,11 @@
                 <!-- Responsive Navigation Menu -->
                 <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
-                        <jet-responsive-nav-link :href="route('dashboard')" :active="route().current('dashboard')">
-                            Dashboard
+                        <jet-responsive-nav-link href="/">
+                            Beranda
+                        </jet-responsive-nav-link>
+                        <jet-responsive-nav-link :href="route('profile.show')" :active="route().current('profile.*')">
+                            Profil Saya
                         </jet-responsive-nav-link>
                     </div>
 
