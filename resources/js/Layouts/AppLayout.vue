@@ -11,7 +11,7 @@
                             <!-- Logo -->
                             <div class="flex-shrink-0 flex items-center">
                                 <inertia-link href="/">
-                                    <img class="block h-9 w-auto" src="/manifest/playstore.png" alt="Logo" />
+                                    <img class="block h-9 w-auto" :src="asset('manifest/playstore.png')" alt="Logo" />
                                 </inertia-link>
                             </div>
 

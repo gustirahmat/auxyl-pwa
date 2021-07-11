@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\App;
 
 class Category extends Model
 {
@@ -37,6 +38,15 @@ class Category extends Model
         }
 
         return 'Unisex';
+    }
+
+    public function getCategoryIconAttribute($value): string
+    {
+        if (App::environment('production')) {
+            return $value;
+        }
+
+        return asset($value);
     }
 
     public function relatedProducts(): HasMany

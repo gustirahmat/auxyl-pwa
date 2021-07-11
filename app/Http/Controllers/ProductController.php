@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -43,11 +45,15 @@ class ProductController extends Controller
      * Display the specified resource.
      *
      * @param Product $product
-     * @return Response
+     * @return \Inertia\Response
      */
-    public function show(Product $product)
+    public function show(Product $product): \Inertia\Response
     {
-        //
+        return Inertia::render('Product', [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
+            'product' => $product->loadMissing('relatedCategory', 'relatedPhotos', 'relatedCart')
+        ]);
     }
 
     /**

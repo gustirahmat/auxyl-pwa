@@ -4,8 +4,22 @@ require('./bootstrap');
 import { createApp, h } from 'vue';
 import { App as InertiaApp, plugin as InertiaPlugin } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
+import { asset } from '@codinglabs/laravel-asset';
+import { Workbox } from 'workbox-window';
 
 const el = document.getElementById('app');
+
+if ('serviceWorker' in navigator) {
+    const wb = new Workbox('/service-worker.js');
+
+    wb.register().then((reg) => {
+        // registration worked
+        console.log('Registration succeeded. Scope is ' + reg.scope);
+    }).catch((error) => {
+        // registration failed
+        console.log('Registration failed with ' + error);
+    });
+}
 
 createApp({
     render: () =>
@@ -14,8 +28,13 @@ createApp({
             resolveComponent: (name) => require(`./Pages/${name}`).default,
         }),
 })
-    .mixin({ methods: { route } })
+    .mixin({
+        methods: {
+            asset: asset,
+            route
+        }
+    })
     .use(InertiaPlugin)
     .mount(el);
 
-InertiaProgress.init({ color: '#4B5563' });
+InertiaProgress.init({ color: '#74D14C' });

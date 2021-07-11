@@ -137,7 +137,7 @@
             <header class="py-10">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h1 class="text-3xl font-bold text-white">
-                        {{ appName }}
+                        Keranjang Saya
                     </h1>
                 </div>
             </header>
@@ -146,51 +146,42 @@
         <main class="-mt-32">
             <div class="max-w-7xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
                 <div class="bg-white rounded-lg shadow px-5 py-6 sm:px-6">
-                    <h2 class="text-lg leading-6 font-medium text-gray-900">Kategori Pilihan</h2>
-                    <div class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div v-for="category in categories" :key="category.category_id" class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-auxyl-blue">
-                            <div class="flex-shrink-0">
-                                <img class="h-10 w-10 rounded-full object-cover" :src="category.category_icon" @error="imgUrlAlt" v-bind:alt="category.category_name" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <inertia-link :href="route('category.show', category.category_id)" class="focus:outline-none">
-                                    <span class="absolute inset-0" aria-hidden="true" />
-                                    <p class="text-sm font-medium text-gray-900">
-                                        {{ category.category_name }}
-                                    </p>
-                                    <p class="text-sm text-gray-500 truncate">
-                                        Terdapat {{ category.related_products_count }} item untuk {{ category.category_gender }}
-                                    </p>
-                                </inertia-link>
-                            </div>
-                        </div>
-                    </div>
-                    <h2 class="mt-8 mb-2 text-lg leading-6 font-medium text-gray-900">Daftar Produk</h2>
-                    <div class="mt-2 bg-white dark:bg-auxyl-blue overflow-hidden sm:rounded-lg">
-                        <ul role="list" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
-                            <li v-for="product in products" :key="product.source" class="relative">
-                                <inertia-link :href="route('product.show', product.product_id)">
-                                    <div class="group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-auxyl-blue overflow-hidden">
-                                        <img :src="product.related_photos[0].image_url" @error="imgUrlAlt" v-bind:alt="product.related_photos[0].image_alt_text" class="object-cover pointer-events-none group-hover:opacity-75"/>
-                                        <button type="button" class="absolute inset-0 focus:outline-none">
-                                            <span class="sr-only">Lihat detil produk {{ product.product_name }}</span>
-                                        </button>
+                    <ul class="divide-y divide-gray-200">
+                        <li v-for="cart in carts" :key="cart.id">
+                            <inertia-link :href="route('product.show', cart.product_id)" class="block hover:bg-gray-50 py-1">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <img :src="cart.related_product.related_photos[0].image_url" @error="imgUrlAlt" v-bind:alt="cart.related_product.related_photos[0].image_alt_text" class="object-cover rounded-lg h-full w-16 sm:w-32 border border-gray-300 bg-white"/>
                                     </div>
-                                    <p class="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">
-                                        {{ product.product_name }}
-                                    </p>
-                                    <div class="flex justify-between items-center">
-                                        <p class="block text-sm font-medium text-gray-500 pointer-events-none">
-                                            Stok {{ product.product_stock }}
-                                        </p>
-                                        <p class="block text-sm font-medium text-gray-500 pointer-events-none">
-                                            {{ addCommas(product.price_selling) }}
-                                        </p>
+                                    <div class="block w-full">
+                                        <div class="p-2 sm:py-4 sm:px-6">
+                                            <p class="text-sm font-medium text-auxyl-blue truncate">
+                                                {{ cart.related_product.product_name }}
+                                            </p>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <TagIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                        Kategori {{ cart.related_product.related_category.category_name }}
+                                                    </p>
+                                                    <p class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
+                                                        <ShoppingCartIconSolid class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                        Jumlah Pesanan : {{ cart.cart_qty }}
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <CurrencyDollarIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                    <p>
+                                                        {{ addCommas(cart.product_price) }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </inertia-link>
-                            </li>
-                        </ul>
-                    </div>
+                                </div>
+                            </inertia-link>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </main>
@@ -205,6 +196,7 @@
 import { ref } from 'vue'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { BellIcon, MenuIcon, ShoppingCartIcon, XIcon } from '@heroicons/vue/outline'
+import { TagIcon, CurrencyDollarIcon, ShoppingCartIcon as ShoppingCartIconSolid } from '@heroicons/vue/solid'
 
 const navigation = [
     {
@@ -230,53 +222,37 @@ const proproduct = [
         url: '/',
     }
 ]
-const products = [
+const positions = [
     {
-        title: 'IMG_4985.HEIC',
-        size: '3.9 MB',
-        source:
-            'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
+        id: 1,
+        title: 'Back End Developer',
+        type: 'Full-time',
+        location: 'Remote',
+        department: 'Engineering',
+        closeDate: '2020-01-07',
+        closeDateFull: 'January 7, 2020',
     },
     {
-        title: 'IMG_4985.HEIC',
-        size: '3.9 MB',
-        source:
-            'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
+        id: 2,
+        title: 'Front End Developer',
+        type: 'Full-time',
+        location: 'Remote',
+        department: 'Engineering',
+        closeDate: '2020-01-07',
+        closeDateFull: 'January 7, 2020',
     },
     {
-        title: 'IMG_4985.HEIC',
-        size: '3.9 MB',
-        source:
-            'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
+        id: 3,
+        title: 'User Interface Designer',
+        type: 'Full-time',
+        location: 'Remote',
+        department: 'Design',
+        closeDate: '2020-01-14',
+        closeDateFull: 'January 14, 2020',
     },
-    {
-        title: 'IMG_4985.HEIC',
-        size: '3.9 MB',
-        source:
-            'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
-    },
-    // More products...
 ]
-const people = [
-    {
-        name: 'Leslie Alexander',
-        email: 'lesliealexander@example.com',
-        role: 'Co-Founder / CEO',
-        imageUrl:
-            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-        name: 'Leslie Alexander',
-        email: 'lesliealexander@example.com',
-        role: 'Co-Founder / CEO',
-        imageUrl:
-            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    // More people...
-]
-
 export default {
-    name: 'Homepage',
+    name: "Cart",
     components: {
         Disclosure,
         DisclosureButton,
@@ -289,6 +265,9 @@ export default {
         MenuIcon,
         ShoppingCartIcon,
         XIcon,
+        TagIcon,
+        CurrencyDollarIcon,
+        ShoppingCartIconSolid,
     },
     setup() {
         const open = ref(false)
@@ -296,8 +275,7 @@ export default {
         return {
             navigation,
             proproduct,
-            products,
-            people,
+            positions,
             open,
         }
     },
@@ -305,8 +283,7 @@ export default {
         appName: String,
         canLogin: Boolean,
         canRegister: Boolean,
-        categories: Object,
-        products: Object,
+        carts: Object,
     },
     methods: {
         addCommas(nStr) {

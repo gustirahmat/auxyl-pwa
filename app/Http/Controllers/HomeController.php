@@ -23,8 +23,8 @@ class HomeController extends Controller
             'appName' => config('app.name'),
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
-            'categories' => Category::all()->take(2),
-            'products' => Product::with('relatedCategory', 'relatedPhotos')->latest()->get()
+            'categories' => Category::query()->withCount('relatedProducts')->limit(2)->get(),
+            'products' => Product::with('relatedPhotos:product_id,image_url,image_alt_text')->latest()->get()
         ]);
     }
 }

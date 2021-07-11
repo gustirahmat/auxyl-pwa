@@ -13,7 +13,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                'auxyl-blue': '#083b66',
+                'auxyl-blue': '#083B66',
                 'auxyl-green': '#74D14C',
             },
             fontFamily: {
