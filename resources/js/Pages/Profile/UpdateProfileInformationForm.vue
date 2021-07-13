@@ -51,8 +51,57 @@
             <!-- Email -->
             <div class="col-span-6 sm:col-span-4">
                 <jet-label for="email" value="Email" />
-                <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" />
+                <jet-input id="email" type="email" class="mt-1 block w-full" v-model.trim="form.email" />
                 <jet-input-error :message="form.errors.email" class="mt-2" />
+            </div>
+
+            <!-- Phone -->
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="phone" value="Phone" />
+                <jet-input id="phone" type="tel" class="mt-1 block w-full" v-model.number="form.phone" />
+                <jet-input-error :message="form.errors.email" class="mt-2" />
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="address" value="Delivery Address" />
+                <jet-input id="address" type="text" class="mt-1 block w-full" v-model="form.address" />
+                <jet-input-error :message="form.errors.address" class="mt-2" />
+            </div>
+
+            <!-- Zipcode -->
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="zipcode" value="Zipcode" />
+                <jet-input id="zipcode" type="text" class="mt-1 block w-full" v-model.number="form.zipcode" />
+                <jet-input-error :message="form.errors.zipcode" class="mt-2" />
+            </div>
+
+            <!-- Kelurahan -->
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="kelurahan" value="Kelurahan" />
+                <jet-input id="kelurahan" type="text" class="mt-1 block w-full" v-model="form.kelurahan" />
+                <jet-input-error :message="form.errors.kelurahan" class="mt-2" />
+            </div>
+
+            <!-- Kecamatan -->
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="kecamatan" value="Kecamatan" />
+                <jet-input id="kecamatan" type="text" class="mt-1 block w-full" v-model="form.kecamatan" />
+                <jet-input-error :message="form.errors.kecamatan" class="mt-2" />
+            </div>
+
+            <!-- City -->
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="city" value="Kabupaten/Kota" />
+                <jet-input id="city" type="text" class="mt-1 block w-full" v-model="form.city" />
+                <jet-input-error :message="form.errors.city" class="mt-2" />
+            </div>
+
+            <!-- Province -->
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="province" value="Province" />
+                <jet-input id="province" type="text" class="mt-1 block w-full" v-model="form.province" />
+                <jet-input-error :message="form.errors.province" class="mt-2" />
             </div>
         </template>
 
@@ -94,9 +143,16 @@
             return {
                 form: this.$inertia.form({
                     _method: 'PUT',
+                    photo: null,
                     name: this.user.name,
                     email: this.user.email,
-                    photo: null,
+                    phone: this.user.phone,
+                    address: this.user.related_customer.customer_address,
+                    zipcode: this.user.related_customer.customer_zipcode,
+                    kelurahan: this.user.related_customer.customer_kelurahan,
+                    kecamatan: this.user.related_customer.customer_kecamatan,
+                    city: this.user.related_customer.customer_kabkot,
+                    province: this.user.related_customer.customer_provinsi,
                 }),
 
                 photoPreview: null,
