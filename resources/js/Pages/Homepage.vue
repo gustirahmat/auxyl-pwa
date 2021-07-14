@@ -134,6 +134,9 @@
                                 <inertia-link :href="route('profile.show')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
                                     Profil Saya
                                 </inertia-link>
+                                <inertia-link :href="route('order.index')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
+                                    Daftar Pesanan
+                                </inertia-link>
                                 <!-- Authentication -->
                                 <form @submit.prevent="logout">
                                     <button type="submit" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
@@ -245,6 +248,10 @@ const proproduct = [
     {
         title: 'Profil Saya',
         url: route('profile.show'),
+    },
+    {
+        title: 'Daftar Pesanan',
+        url: route('order.index'),
     }
 ]
 const products = [

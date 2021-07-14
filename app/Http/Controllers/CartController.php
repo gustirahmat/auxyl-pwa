@@ -32,8 +32,6 @@ class CartController extends Controller
     public function index(): Response
     {
         return Inertia::render('Cart', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
             'carts' => Auth::user()->relatedCarts
         ]);
     }

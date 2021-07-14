@@ -50,8 +50,6 @@ class ProductController extends Controller
     public function show(Product $product): \Inertia\Response
     {
         return Inertia::render('Product', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
             'product' => $product->loadMissing('relatedCategory', 'relatedPhotos', 'relatedCart')
         ]);
     }

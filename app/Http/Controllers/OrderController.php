@@ -7,14 +7,14 @@ use App\Models\Order;
 use App\Models\OrderDelivery;
 use App\Models\OrderStatus;
 use App\Notifications\OrderCreated;
-use App\Notifications\TransactionCreated;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Throwable;
 
 class OrderController extends Controller
@@ -32,11 +32,13 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Inertia\Response
      */
-    public function index()
+    public function index(): \Inertia\Response
     {
-        //
+        return Inertia::render('Order/Index', [
+            'orders' => Auth::user()->relatedCustomer->relatedOrders
+        ]);
     }
 
     /**
@@ -127,7 +129,7 @@ class OrderController extends Controller
             // Buat status
             $status = new OrderStatus([
                 'status_code' => 1,
-                'status_action' => 'Pesanan dibuat',
+                'status_action' => 'Menunggu pembayaran',
                 'status_comment' => null
             ]);
             $order->relatedStatuses()->save($status);
@@ -148,11 +150,13 @@ class OrderController extends Controller
      * Display the specified resource.
      *
      * @param Order $order
-     * @return Response
+     * @return \Inertia\Response
      */
-    public function show(Order $order)
+    public function show(Order $order): \Inertia\Response
     {
-        //
+        return Inertia::render('Order/Show', [
+            'order' => $order->loadMissing('relatedDelivery', 'relatedStatuses', 'relatedComplain')
+        ]);
     }
 
     /**
