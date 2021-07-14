@@ -3,6 +3,7 @@
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromoController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ Route::resource('category', CategoryController::class);
 Route::resource('product', ProductController::class);
 Route::resource('promo', PromoController::class);
 Route::resource('cart', CartController::class);
+Route::resource('order', OrderController::class);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('Dashboard');

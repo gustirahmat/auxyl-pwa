@@ -59,7 +59,7 @@
             <div class="col-span-6 sm:col-span-4">
                 <jet-label for="phone" value="Phone" />
                 <jet-input id="phone" type="tel" class="mt-1 block w-full" v-model.number="form.phone" />
-                <jet-input-error :message="form.errors.email" class="mt-2" />
+                <jet-input-error :message="form.errors.phone" class="mt-2" />
             </div>
 
             <!-- Delivery Address -->
@@ -147,12 +147,12 @@
                     name: this.user.name,
                     email: this.user.email,
                     phone: this.user.phone,
-                    address: this.user.related_customer.customer_address,
-                    zipcode: this.user.related_customer.customer_zipcode,
-                    kelurahan: this.user.related_customer.customer_kelurahan,
-                    kecamatan: this.user.related_customer.customer_kecamatan,
-                    city: this.user.related_customer.customer_kabkot,
-                    province: this.user.related_customer.customer_provinsi,
+                    address: this.user.related_customer ? this.user.related_customer.customer_address : '',
+                    zipcode: this.user.related_customer ? this.user.related_customer.customer_zipcode : '',
+                    kelurahan: this.user.related_customer ? this.user.related_customer.customer_kelurahan : '',
+                    kecamatan: this.user.related_customer ? this.user.related_customer.customer_kecamatan : '',
+                    city: this.user.related_customer ? this.user.related_customer.customer_kabkot : '',
+                    province: this.user.related_customer ? this.user.related_customer.customer_provinsi : '',
                 }),
 
                 photoPreview: null,
