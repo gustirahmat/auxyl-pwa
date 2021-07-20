@@ -6,8 +6,10 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderDelivery;
 use App\Models\OrderStatus;
+use App\Models\ProductStock;
 use App\Notifications\OrderCreated;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -87,8 +89,21 @@ class OrderController extends Controller
             // Simpan produk yang dipesan
             $total = 0;
             $supplier_id = null;
-            $carts = Cart::with('relatedUser')->where('user_id', '=', Auth::id());
+            $carts = Cart::with('relatedProduct')->where('user_id', '=', Auth::id());
             foreach ($carts->get() as $cart) {
+                if ($cart->relatedProduct->product_stock - $cart->cart_qty < 0) {
+                    return back()->withErrors('Anda tidak dapat melanjutkan pesanan karena pesanan Anda melebihi stok yang kami sediakan.', 404);
+                }
+                // Kurangi stok
+                $cart->relatedProduct->product_stock = $cart->relatedProduct->product_stock - $cart->cart_qty;
+                $cart->relatedProduct->save();
+                $stock = new ProductStock([
+                    'stock_qty' => $cart->cart_qty,
+                    'stock_status' => false,
+                    'stock_notes' => 'Pesanan baru #' . $order->order_no . ' ' . Auth::user()->name . ' ' . $cart->cart_qty . ' pcs',
+                ]);
+                $cart->relatedProduct->relatedStocks()->save($stock);
+
                 $product = $order->relatedProducts()->create([
                     'product_id' => $cart['product_id'],
                     'category_id' => $cart['category_id'],

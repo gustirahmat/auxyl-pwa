@@ -62,4 +62,9 @@ class Product extends Model
     {
         return $this->hasOne(Cart::class, 'product_id', 'product_id')->where('user_id', '=', Auth::id());
     }
+
+    public function relatedStocks(): HasMany
+    {
+        return $this->hasMany(ProductStock::class, 'product_id', 'product_id')->latest();
+    }
 }
