@@ -22,6 +22,7 @@
                     </button>
                     <button
                             type="button"
+                            @click="showComplainForm"
                             class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:text-auxyl-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-auxyl-green"
                             v-if="order.order_latest_status === 4"
                     >
@@ -323,8 +324,7 @@
             </div>
             <!-- This element is to trick the browser into centering the modal contents. -->
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-lg w-full"
-                 role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-lg w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
                 <form @submit.prevent="submitPaymentProof(form)" enctype="multipart/form-data">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-9 sm:pb-4">
                         <div>
@@ -332,31 +332,23 @@
                             <div class="mt-1 border-2 border-gray-300 border-dashed rounded-md px-6 pt-5 pb-6 flex justify-center">
                                 <div class="space-y-1 text-center">
                                     <div v-if="objectURL">
-                                        <iframe :src="objectURL"
-                                                class="h-1/2 w-full border-gray-300 bg-gray-300 overflow-scroll"></iframe>
+                                        <iframe :src="objectURL" class="h-1/2 w-full border-gray-300 bg-gray-300 overflow-scroll"></iframe>
                                         <div class="flex items-center align-middle justify-center">
                                             <p class="text-xs text-gray-500">
                                                 {{ name }} ({{ size }} kB). &nbsp;
                                             </p>
-                                            <button type="button" @click="deleteFile"
-                                                    class="relative text-xs text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500">
+                                            <button type="button" @click="deleteFile" class="relative text-xs text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500">
                                                 Hapus
                                             </button>
                                         </div>
                                     </div>
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
-                                         viewBox="0 0 48 48" aria-hidden="true" v-else>
-                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true" v-else>
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                     <div class="flex text-sm text-gray-600 items-center align-middle justify-center">
-                                        <label for="fileUpload"
-                                               class="relative cursor-pointer bg-white rounded-md font-medium text-auxyl-green hover:text-green-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-auxyl-green">
+                                        <label for="fileUpload" class="relative cursor-pointer bg-white rounded-md font-medium text-auxyl-green hover:text-green-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-auxyl-green">
                                             <span>Silahkan pilih file</span>
-                                            <input type="file" ref="fileUpload" id="fileUpload" accept="image/*"
-                                                   class="sr-only"
-                                                   @input="form.order_payment_proof = $event.target.files[0]"
-                                                   @change="changeFile" required/>
+                                            <input type="file" ref="fileUpload" id="fileUpload" accept="image/*" class="sr-only" @input="form.order_payment_proof = $event.target.files[0]" @change="changeFile" required/>
                                         </label>
                                         <p class="pl-1">atau drag and drop</p>
                                     </div>
@@ -372,9 +364,102 @@
                         <jet-secondary-button @click="closeModal">
                             Batalkan
                         </jet-secondary-button>
-                        <jet-button class="ml-2" :class="{ 'opacity-25': form.processing }"
-                                    :disabled="form.processing">
+                        <jet-button class="ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             Upload
+                        </jet-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="fixed z-10 inset-0 overflow-y-auto ease-out duration-400" v-if="isOpenComplain">
+        <div class="flex items-end justify-center min-h-screen text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <!-- This element is to trick the browser into centering the modal contents. -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-lg w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+                <form @submit.prevent="submitComplainOrder(formComplain)" enctype="multipart/form-data">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-9 sm:pb-4">
+                        <jet-validation-errors class="mb-4" />
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            Ajukan Komplain
+                        </h3>
+                        <div class="mt-2 max-w-xl text-sm text-gray-500">
+                            <p>
+                                Silahkan isi form berikut:
+                            </p>
+                        </div>
+                        <div class="mt-2">
+                            <jet-label for="complain_category" value="Kategori Komplain" />
+                            <div class="mt-4 space-y-4">
+                                <div class="flex items-center">
+                                    <input id="category_defect" v-model="formComplain.complain_category" value="Barang Cacat / Rusak" type="radio" class="focus:ring-auxyl-blue h-4 w-4 text-auxyl-blue border-gray-300" />
+                                    <label for="category_defect" class="ml-3 block text-sm font-medium text-gray-700">
+                                        Barang Cacat / Rusak
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="category_incomplete" v-model="formComplain.complain_category" value="Pesanan Tidak Lengkap" type="radio" class="focus:ring-auxyl-blue h-4 w-4 text-auxyl-blue border-gray-300" />
+                                    <label for="category_incomplete" class="ml-3 block text-sm font-medium text-gray-700">
+                                        Pesanan Tidak Lengkap
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="category_other" v-model="formComplain.complain_category" value="Lainnya" type="radio" class="focus:ring-auxyl-blue h-4 w-4 text-auxyl-blue border-gray-300" />
+                                    <label for="category_other" class="ml-3 block text-sm font-medium text-gray-700">
+                                        Lainnya
+                                    </label>
+                                </div>
+                            </div>
+                            <jet-input-error :message="formComplain.errors.complain_category" class="mt-2" />
+                        </div>
+                        <div class="mt-2">
+                            <jet-label for="complain_description" value="Alasan Komplain" />
+                            <jet-input id="complain_description" type="text" class="block w-full" v-model="formComplain.complain_description" ref="complain_description" />
+                            <jet-input-error :message="formComplain.errors.complain_description" class="mt-2" />
+                        </div>
+                        <div class="mt-2">
+                            <jet-label for="complain_attachment" value="Upload kondisi paket/produk saat diterima" />
+                            <div class="mt-1 border-2 border-gray-300 border-dashed rounded-md px-6 pt-5 pb-6 flex justify-center">
+                                <div class="space-y-1 text-center">
+                                    <div v-if="objectURL">
+                                        <iframe :src="objectURL" class="h-1/2 w-full border-gray-300 bg-gray-300 overflow-scroll"></iframe>
+                                        <div class="flex items-center align-middle justify-center">
+                                            <p class="text-xs text-gray-500">
+                                                {{ name }} ({{ size }} kB). &nbsp;
+                                            </p>
+                                            <button type="button" @click="deleteFile" class="relative text-xs text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500">
+                                                Hapus
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true" v-else>
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <div class="flex text-sm text-gray-600 items-center align-middle justify-center">
+                                        <label for="fileUploadAttachment" class="relative cursor-pointer bg-white rounded-md font-medium text-auxyl-green hover:text-green-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-auxyl-green">
+                                            <span>Silahkan pilih file</span>
+                                            <input type="file" ref="fileUploadAttachment" id="fileUploadAttachment" accept="image/*" class="sr-only" @input="formComplain.complain_attachment = $event.target.files[0]" @change="changeFile" required/>
+                                        </label>
+                                        <p class="pl-1">atau drag and drop</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500">
+                                        Hanya menerima gambar dalam format JPG, JPEG, dan PNG maks. 2MB
+                                    </p>
+                                </div>
+                            </div>
+                            <jet-input-error :message="formComplain.errors.complain_attachment" class="my-2"/>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 bg-gray-100 text-right flex justify-end">
+                        <jet-secondary-button @click="closeModalComplain">
+                            Batalkan
+                        </jet-secondary-button>
+                        <jet-button class="ml-2" :class="{ 'opacity-25': formComplain.processing }" :disabled="formComplain.processing">
+                            Simpan
                         </jet-button>
                     </div>
                 </form>
@@ -407,8 +492,7 @@
                                 </p>
                             </div>
                             <div class="ml-4 flex-shrink-0 flex">
-                                <button @click="show = false"
-                                        class="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <button @click="show = false" class="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                     <span class="sr-only">Close</span>
                                     <XIcon class="h-5 w-5" aria-hidden="true"/>
                                 </button>
@@ -463,7 +547,12 @@ export default {
                 order_id: this.order.order_id,
                 order_payment_proof: null,
                 status_code: Number,
-                status_comment: String
+            }),
+            formComplain: this.$inertia.form({
+                complain_status: Number,
+                complain_category: String,
+                complain_description: String,
+                complain_attachment: null,
             }),
             format,
             locale,
@@ -471,6 +560,7 @@ export default {
             status: String,
             uploadForm: Object,
             isOpen: false,
+            isOpenComplain: false,
             name: "",
             type: "",
             size: 0,
@@ -512,8 +602,17 @@ export default {
             this.form.order_payment_proof = this.uploadForm.order_payment_proof
             this.isOpen = true
         },
+        showComplainForm: function (data) {
+            this.uploadForm = Object.assign({}, data);
+            this.formComplain.complain_description = this.uploadForm.complain_description
+            this.formComplain.complain_attachment = this.uploadForm.complain_attachment
+            this.isOpenComplain = true
+        },
         closeModal: function () {
             this.isOpen = false
+        },
+        closeModalComplain: function () {
+            this.isOpenComplain = false
         },
         submitPaymentProof: function (form) {
             const data = new FormData();
@@ -550,6 +649,7 @@ export default {
         },
         deleteFile() {
             document.querySelector('#fileUpload').value = ''
+            document.querySelector('#fileUploadAttachment').value = ''
             URL.revokeObjectURL(this.objectURL);
             this.objectURL = null
         },
@@ -567,6 +667,32 @@ export default {
                     onError: (error) => alert(error),
                     onFinish: () => this.form.reset(),
                 });
+            }
+        },
+        submitComplainOrder: function (form) {
+            if (confirm('Apakah Anda yakin ingin mengajukan komplain untuk pesanan ini?')) {
+                const data = new FormData();
+                data.append('_method', 'PUT');
+                data.append('status_code', '6');
+                data.append('complain_attachment', this.file);
+                data.append('complain_description', form.complain_description);
+                data.append('complain_category', form.complain_category);
+                this.$inertia.post(route('order.update', this.order.order_id), data, {
+                    errorBag: 'submitComplainOrder',
+                    preserveScroll: true,
+                    onSuccess: page => {
+                        console.log(page)
+                        this.closeModalComplain()
+                        this.formComplain.reset()
+                        this.show = true
+                        this.status = page.props.flash.message
+                    },
+                    onError: errors => {
+                        console.log(errors)
+                        this.formComplain.errors = Object.assign({}, errors)
+                    },
+                    onFinish: () => this.form.reset(),
+                })
             }
         }
     }

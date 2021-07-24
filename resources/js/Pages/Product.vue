@@ -110,10 +110,10 @@
                         </h3>
                         <div class="mt-2 max-w-xl text-sm text-gray-500">
                             <p>
-                                Silahkan isi jumlah pesanan Anda.
+                                Silahkan isi jumlah pesanan Anda:
                             </p>
                         </div>
-                        <div class="mt-1 w-full sm:max-w-xs">
+                        <div class="mt-1">
                             <jet-label for="cart_qty" class="sr-only" value="Cart Qty" />
                             <jet-input id="cart_qty" type="number" class="block w-full" min="1" :max="Number(product.product_stock)" v-model.number="form.cart_qty" ref="cart_qty" />
                             <jet-input-error :message="form.errors.cart_qty" class="mt-2" />

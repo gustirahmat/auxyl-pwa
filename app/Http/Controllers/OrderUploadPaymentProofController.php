@@ -62,7 +62,7 @@ class OrderUploadPaymentProofController extends Controller
             ]);
             $order->relatedStatuses()->save($status);
 
-            return back()->with('message', 'Berhasil mengunggah bukti pembayaran. Admin kami akan segera memverifikasi pesanan Anda. Terima kasih');
+            return back()->with('message', 'Berhasil mengunggah bukti pembayaran. Admin kami akan segera memverifikasi pesanan Anda. Terima kasih.');
         } catch (Throwable $e) {
             DB::rollBack();
 

@@ -59,7 +59,7 @@ class CartController extends Controller
                 ]
             );
 
-            return back()->with('message', 'Berhasil memasukkan produk ke dalam Keranjang Belanja Anda');
+            return back()->with('message', 'Berhasil memasukkan produk ke dalam Keranjang Belanja Anda.');
         } catch (Throwable $e) {
             return back()->withErrors($e->getMessage(), $e->getCode());
         }
