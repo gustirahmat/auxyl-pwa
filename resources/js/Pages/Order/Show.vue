@@ -1,218 +1,45 @@
 <template>
-    <div>
-        <jet-banner/>
-        <div class="bg-auxyl-blue pb-32">
-            <Disclosure as="nav" class="bg-auxyl-blue" v-slot="{ open }">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="border-b border-auxyl-green">
-                        <div class="flex items-center justify-between h-16 px-4 sm:px-0">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <inertia-link href="/">
-                                        <img class="block h-9 w-auto" :src="asset('manifest/playstore.png')"
-                                             alt="Logo"/>
-                                    </inertia-link>
-                                </div>
-                                <div class="hidden md:block">
-                                    <div class="ml-10 flex items-baseline space-x-4">
-                                        <template v-for="(item, itemIdx) in navigation" :key="item">
-                                            <template v-if="(itemIdx === 0)">
-                                                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                                                <inertia-link :href="item.url"
-                                                              class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
-                                                    {{ item.title }}
-                                                </inertia-link>
-                                            </template>
-                                            <inertia-link v-else :href="item.url"
-                                                          class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                                {{ item.title }}
-                                            </inertia-link>
-                                        </template>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="hidden md:block">
-                                <div v-if="canLogin" class="ml-4 flex items-center md:ml-6 space-x-3">
-                                    <template v-if="$page.props.user">
-                                        <inertia-link :href="route('cart.index')">
-                                            <button class="bg-auxyl-blue p-1 text-gray-400 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                                <span class="sr-only">View carts</span>
-                                                <ShoppingCartIcon class="h-6 w-6" aria-hidden="true"/>
-                                            </button>
-                                        </inertia-link>
-                                        <button class="bg-auxyl-blue p-1 text-gray-400 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                            <span class="sr-only">View notifications</span>
-                                            <BellIcon class="h-6 w-6" aria-hidden="true"/>
-                                        </button>
-
-                                        <!-- Proproduct dropdown -->
-                                        <Menu as="div" class="ml-3 relative">
-                                            <div>
-                                                <MenuButton
-                                                        class="max-w-xs bg-auxyl-blue rounded-full flex items-center text-sm">
-                                                    <span class="sr-only">Open user menu</span>
-                                                    <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                                        <img class="h-8 w-8 rounded-full object-cover"
-                                                             :src="'https://ui-avatars.com/api/?name=' + $page.props.user.name + '&color=7F9CF5&background=EBF4FF'"
-                                                             v-bind:alt="$page.props.user.name"/>
-                                                    </button>
-                                                </MenuButton>
-                                            </div>
-                                            <transition enter-active-class="transition ease-out duration-100"
-                                                        enter-from-class="transform opacity-0 scale-95"
-                                                        enter-to-class="transform opacity-100 scale-100"
-                                                        leave-active-class="transition ease-in duration-75"
-                                                        leave-from-class="transform opacity-100 scale-100"
-                                                        leave-to-class="transform opacity-0 scale-95">
-                                                <MenuItems
-                                                        class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                    <div class="block px-4 py-2 text-xs text-gray-400">
-                                                        Pengaturan
-                                                    </div>
-                                                    <MenuItem v-for="item in proproduct" :key="item"
-                                                              v-slot="{ active }">
-                                                        <inertia-link :href="item.url"
-                                                                      :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">
-                                                            {{ item.title }}
-                                                        </inertia-link>
-                                                    </MenuItem>
-                                                </MenuItems>
-                                            </transition>
-                                        </Menu>
-                                        <!-- Authentication -->
-                                        <form @submit.prevent="logout">
-                                            <button type="submit"
-                                                    class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                                Log Out
-                                            </button>
-                                        </form>
-                                    </template>
-                                    <template v-else>
-                                        <inertia-link :href="route('login')"
-                                                      class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                            Log in
-                                        </inertia-link>
-
-                                        <inertia-link v-if="canRegister" :href="route('register')"
-                                                      class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                            Register
-                                        </inertia-link>
-                                    </template>
-                                </div>
-                            </div>
-                            <div class="flex md:hidden space-x-1">
-                                <inertia-link :href="route('cart.index')">
-                                    <button class="bg-auxyl-blue inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                        <span class="sr-only">View carts</span>
-                                        <ShoppingCartIcon class="block h-6 w-6" aria-hidden="true"/>
-                                    </button>
-                                </inertia-link>
-                                <!-- Mobile menu button -->
-                                <DisclosureButton
-                                        class="bg-auxyl-blue inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                    <span class="sr-only">Open main menu</span>
-                                    <MenuIcon v-if="!open" class="block h-6 w-6" aria-hidden="true"/>
-                                    <XIcon v-else class="block h-6 w-6" aria-hidden="true"/>
-                                </DisclosureButton>
-                            </div>
-                        </div>
+    <public-layout>
+        <template #header>
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
+                <div class="flex items-center space-x-5">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">Pesanan No. {{ order.order_no }}</h1>
+                        <p class="text-base font-medium text-gray-300">
+                            <time :datetime="order.order_date">
+                                {{ format(parseISO(order.order_date), 'EEEE, dd MMMM yyyy', {locale}) }}
+                            </time>
+                        </p>
                     </div>
                 </div>
-
-                <DisclosurePanel class="border-b border-auxyl-green md:hidden">
-                    <div class="px-2 py-3 space-y-1 sm:px-3">
-                        <template v-for="(item, itemIdx) in navigation" :key="item">
-                            <template v-if="(itemIdx === 0)">
-                                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                                <inertia-link :href="item.url"
-                                              class="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium">
-                                    {{ item.title }}
-                                </inertia-link>
-                            </template>
-                            <inertia-link v-else :href="item.url"
-                                          class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                                {{ item.title }}
-                            </inertia-link>
-                        </template>
-                    </div>
-                    <div class="pt-4 pb-3 border-t border-auxyl-green">
-                        <template v-if="$page.props.user">
-                            <div class="flex items-center px-5">
-                                <div class="flex-shrink-0">
-                                    <img class="h-10 w-10 rounded-full"
-                                         :src="'https://ui-avatars.com/api/?name=' + $page.props.user.name + '&color=7F9CF5&background=EBF4FF'"
-                                         v-bind:alt="$page.props.user.name"/>
-                                </div>
-                                <div class="ml-3">
-                                    <div class="text-base font-medium leading-none text-white">{{
-                                            $page.props.user.name
-                                        }}
-                                    </div>
-                                    <div class="text-sm font-medium leading-none text-gray-400">
-                                        {{ $page.props.user.email }}
-                                    </div>
-                                </div>
-                                <button class="ml-auto bg-auxyl-blue flex-shrink-0 p-1 text-gray-400 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                    <span class="sr-only">View notifications</span>
-                                    <BellIcon class="h-6 w-6" aria-hidden="true"/>
-                                </button>
-                            </div>
-                            <div class="mt-3 px-2 space-y-1">
-                                <inertia-link :href="route('profile.show')"
-                                              class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
-                                    Profil Saya
-                                </inertia-link>
-                                <inertia-link :href="route('order.index')"
-                                              class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
-                                    Daftar Pesanan
-                                </inertia-link>
-                                <!-- Authentication -->
-                                <form @submit.prevent="logout">
-                                    <button type="submit"
-                                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
-                                        Log Out
-                                    </button>
-                                </form>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <inertia-link :href="route('login')"
-                                          class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
-                                Log in
-                            </inertia-link>
-
-                            <inertia-link v-if="canRegister" :href="route('register')"
-                                          class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
-                                Register
-                            </inertia-link>
-                        </template>
-                    </div>
-                </DisclosurePanel>
-            </Disclosure>
-            <header class="py-10">
-                <div class="max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
-                    <div class="flex items-center space-x-5">
-                        <div>
-                            <h1 class="text-3xl font-bold text-white">Pesanan No. {{ order.order_no }}</h1>
-                            <p class="text-base font-medium text-gray-300">
-                                <time :datetime="order.order_date">
-                                    {{ format(parseISO(order.order_date), 'EEEE, dd MMMM yyyy', {locale}) }}
-                                </time>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3"
-                         v-if="!order.order_payment_proof">
-                        <button type="button" @click="showUploadForm(order)"
-                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-auxyl-blue bg-auxyl-green hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-auxyl-green">
-                            Upload Bukti Bayar
+                <div class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
+                    <button
+                            type="button"
+                            @click="showUploadForm(order)"
+                            class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-auxyl-blue bg-auxyl-green hover:bg-green-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-auxyl-green"
+                            v-if="!order.order_payment_proof">
+                        Upload Bukti Bayar
+                    </button>
+                    <button
+                            type="button"
+                            class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:text-auxyl-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-auxyl-green"
+                            v-if="order.order_latest_status === 4"
+                    >
+                        Ajukan Komplain
+                    </button>
+                    <form @submit.prevent="submitCompleteOrder" v-if="order.order_latest_status === 4">
+                        <button
+                                type="submit"
+                                class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-auxyl-blue bg-auxyl-green hover:bg-green-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-auxyl-green"
+                        >
+                            Selesaikan Pesanan
                         </button>
-                    </div>
+                    </form>
                 </div>
-            </header>
-        </div>
+            </div>
+        </template>
 
-        <main class="-mt-32">
+        <div>
             <div class="max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
                 <div class="space-y-6 lg:col-start-1 lg:col-span-2">
                     <section aria-labelledby="applicant-information-title">
@@ -486,70 +313,71 @@
                     </div>
                 </section>
             </div>
-        </main>
-        <div class="fixed z-10 inset-0 overflow-y-auto ease-out duration-400" v-if="isOpen">
-            <div class="flex items-end justify-center min-h-screen text-center sm:block sm:p-0">
-                <div class="fixed inset-0 transition-opacity">
-                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-                </div>
-                <!-- This element is to trick the browser into centering the modal contents. -->
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-lg w-full"
-                     role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-                    <form @submit.prevent="submitPaymentProof(form)" enctype="multipart/form-data">
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-9 sm:pb-4">
-                            <div>
-                                <input type="hidden" v-model="form.order_id">
-                                <div class="mt-1 border-2 border-gray-300 border-dashed rounded-md px-6 pt-5 pb-6 flex justify-center">
-                                    <div class="space-y-1 text-center">
-                                        <div v-if="objectURL">
-                                            <iframe :src="objectURL"
-                                                    class="h-1/2 w-full border-gray-300 bg-gray-300 overflow-scroll"></iframe>
-                                            <div class="flex items-center align-middle justify-center">
-                                                <p class="text-xs text-gray-500">
-                                                    {{ name }} ({{ size }} kB). &nbsp;
-                                                </p>
-                                                <button type="button" @click="deleteFile"
-                                                        class="relative text-xs text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500">
-                                                    Hapus
-                                                </button>
-                                            </div>
+        </div>
+    </public-layout>
+    
+    <div class="fixed z-10 inset-0 overflow-y-auto ease-out duration-400" v-if="isOpen">
+        <div class="flex items-end justify-center min-h-screen text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <!-- This element is to trick the browser into centering the modal contents. -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-lg w-full"
+                 role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+                <form @submit.prevent="submitPaymentProof(form)" enctype="multipart/form-data">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-9 sm:pb-4">
+                        <div>
+                            <input type="hidden" v-model="form.order_id">
+                            <div class="mt-1 border-2 border-gray-300 border-dashed rounded-md px-6 pt-5 pb-6 flex justify-center">
+                                <div class="space-y-1 text-center">
+                                    <div v-if="objectURL">
+                                        <iframe :src="objectURL"
+                                                class="h-1/2 w-full border-gray-300 bg-gray-300 overflow-scroll"></iframe>
+                                        <div class="flex items-center align-middle justify-center">
+                                            <p class="text-xs text-gray-500">
+                                                {{ name }} ({{ size }} kB). &nbsp;
+                                            </p>
+                                            <button type="button" @click="deleteFile"
+                                                    class="relative text-xs text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500">
+                                                Hapus
+                                            </button>
                                         </div>
-                                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
-                                             viewBox="0 0 48 48" aria-hidden="true" v-else>
-                                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                        <div class="flex text-sm text-gray-600 items-center align-middle justify-center">
-                                            <label for="fileUpload"
-                                                   class="relative cursor-pointer bg-white rounded-md font-medium text-auxyl-green hover:text-green-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-auxyl-green">
-                                                <span>Silahkan pilih file</span>
-                                                <input type="file" ref="fileUpload" id="fileUpload" accept="image/*"
-                                                       class="sr-only"
-                                                       @input="form.order_payment_proof = $event.target.files[0]"
-                                                       @change="changeFile" required/>
-                                            </label>
-                                            <p class="pl-1">atau drag and drop</p>
-                                        </div>
-                                        <p class="text-xs text-gray-500">
-                                            Hanya menerima gambar dalam format JPG, JPEG, dan PNG maks. 2MB
-                                        </p>
                                     </div>
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
+                                         viewBox="0 0 48 48" aria-hidden="true" v-else>
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <div class="flex text-sm text-gray-600 items-center align-middle justify-center">
+                                        <label for="fileUpload"
+                                               class="relative cursor-pointer bg-white rounded-md font-medium text-auxyl-green hover:text-green-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-auxyl-green">
+                                            <span>Silahkan pilih file</span>
+                                            <input type="file" ref="fileUpload" id="fileUpload" accept="image/*"
+                                                   class="sr-only"
+                                                   @input="form.order_payment_proof = $event.target.files[0]"
+                                                   @change="changeFile" required/>
+                                        </label>
+                                        <p class="pl-1">atau drag and drop</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500">
+                                        Hanya menerima gambar dalam format JPG, JPEG, dan PNG maks. 2MB
+                                    </p>
                                 </div>
-                                <jet-input-error :message="form.errors.order_payment_proof" class="my-2"/>
                             </div>
+                            <jet-input-error :message="form.errors.order_payment_proof" class="my-2"/>
                         </div>
-                        <div class="px-6 py-4 bg-gray-100 text-right flex justify-end">
-                            <jet-secondary-button @click="closeModal">
-                                Batalkan
-                            </jet-secondary-button>
-                            <jet-button class="ml-2" :class="{ 'opacity-25': form.processing }"
-                                        :disabled="form.processing">
-                                Upload
-                            </jet-button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="px-6 py-4 bg-gray-100 text-right flex justify-end">
+                        <jet-secondary-button @click="closeModal">
+                            Batalkan
+                        </jet-secondary-button>
+                        <jet-button class="ml-2" :class="{ 'opacity-25': form.processing }"
+                                    :disabled="form.processing">
+                            Upload
+                        </jet-button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -594,22 +422,13 @@
 </template>
 
 <script>
-import {ref} from 'vue'
-import {Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/vue'
-import {BellIcon, MenuIcon, ShoppingBagIcon, ShoppingCartIcon, XIcon} from '@heroicons/vue/outline'
-import {
-    CalendarIcon,
-    CheckIcon,
-    ChevronRightIcon,
-    CurrencyDollarIcon,
-    ShoppingCartIcon as ShoppingCartIconSolid,
-    TagIcon,
-    UserIcon
-} from '@heroicons/vue/solid'
-import {format} from 'date-fns'
+import { asset } from "@codinglabs/laravel-asset";
+import { ref } from 'vue'
+import { XIcon } from '@heroicons/vue/outline'
+import { CheckIcon, UserIcon } from '@heroicons/vue/solid'
+import { format } from 'date-fns'
 import locale from 'date-fns/locale/id'
 import parseISO from 'date-fns/parseISO'
-import JetBanner from "@/Jetstream/Banner"
 import JetButton from '@/Jetstream/Button'
 import JetFormSection from '@/Jetstream/FormSection'
 import JetInput from '@/Jetstream/Input'
@@ -619,54 +438,14 @@ import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
 import JetValidationErrors from '@/Jetstream/ValidationErrors'
+import PublicLayout from "@/Layouts/PublicLayout"
 
-const navigation = [
-    {
-        title: 'Beranda',
-        url: '/',
-    },
-    {
-        title: 'Kategori',
-        url: '/kategori',
-    },
-    {
-        title: 'Promo',
-        url: '/promo',
-    }
-]
-const proproduct = [
-    {
-        title: 'Profil Saya',
-        url: route('profile.show'),
-    },
-    {
-        title: 'Daftar Pesanan',
-        url: route('order.index'),
-    }
-]
 export default {
     name: "Order Details",
     components: {
-        Disclosure,
-        DisclosureButton,
-        DisclosurePanel,
-        Menu,
-        MenuButton,
-        MenuItem,
-        MenuItems,
-        BellIcon,
-        MenuIcon,
-        ShoppingBagIcon,
-        ShoppingCartIcon,
         XIcon,
-        TagIcon,
-        CurrencyDollarIcon,
-        ShoppingCartIconSolid,
-        CalendarIcon,
         CheckIcon,
-        ChevronRightIcon,
         UserIcon,
-        JetBanner,
         JetActionMessage,
         JetButton,
         JetFormSection,
@@ -676,12 +455,15 @@ export default {
         JetSecondaryButton,
         JetSectionBorder,
         JetValidationErrors,
+        PublicLayout
     },
     data() {
         return {
             form: this.$inertia.form({
                 order_id: this.order.order_id,
                 order_payment_proof: null,
+                status_code: Number,
+                status_comment: String
             }),
             format,
             locale,
@@ -699,19 +481,13 @@ export default {
         }
     },
     setup() {
-        const open = ref(false)
         const show = ref(false)
 
         return {
-            navigation,
-            proproduct,
-            open,
             show,
         }
     },
     props: {
-        canLogin: Boolean,
-        canRegister: Boolean,
         order: Object,
     },
     computed: {
@@ -729,9 +505,6 @@ export default {
         },
         imgUrlAlt(event) {
             event.target.src = asset('manifest/playstore.png')
-        },
-        logout() {
-            this.$inertia.post(route('logout'));
         },
         showUploadForm: function (data) {
             this.uploadForm = Object.assign({}, data);
@@ -780,6 +553,22 @@ export default {
             URL.revokeObjectURL(this.objectURL);
             this.objectURL = null
         },
+        submitCompleteOrder() {
+            if (confirm('Apakah Anda yakin ingin menyelesaikan pesanan ini karena telah menerima semua barang dengan baik sesuai dengan pesanan Anda?')) {
+                this.form.status_code = 5
+                this.form.put(route('order.update', this.order.order_id), {
+                    errorBag: 'submitCompleteOrder',
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        this.form.reset()
+                        this.show = true
+                        this.status = page.props.flash.message
+                    },
+                    onError: (error) => alert(error),
+                    onFinish: () => this.form.reset(),
+                });
+            }
+        }
     }
 }
 </script>

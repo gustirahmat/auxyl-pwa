@@ -5,17 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Inertia\Response
      */
-    public function index()
+    public function index(): \Inertia\Response
     {
-        //
+        return Inertia::render('Category/Index', [
+            'categories' => Category::query()->withCount('relatedProducts')->get(),
+        ]);
     }
 
     /**
@@ -43,11 +46,14 @@ class CategoryController extends Controller
      * Display the specified resource.
      *
      * @param Category $category
-     * @return Response
+     * @return \Inertia\Response
      */
-    public function show(Category $category)
+    public function show(Category $category): \Inertia\Response
     {
-        //
+        return Inertia::render('Category/Show', [
+            'category' => $category,
+            'products' => $category->loadMissing('relatedProducts.relatedPhotos:product_id,image_url,image_alt_text')->loadCount('relatedProducts')->relatedProducts
+        ]);
     }
 
     /**

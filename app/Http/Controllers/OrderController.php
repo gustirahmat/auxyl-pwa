@@ -179,11 +179,43 @@ class OrderController extends Controller
      *
      * @param Request $request
      * @param Order $order
-     * @return Response
+     * @return RedirectResponse
      */
-    public function update(Request $request, Order $order)
+    public function update(Request $request, Order $order): RedirectResponse
     {
-        //
+        $validated_data = $request->validate([
+            'status_code' => 'bail|required|integer',
+            'status_comment' => 'sometimes|nullable|string|max:255',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            if ($validated_data['status_code'] == 5) {
+                $status = new OrderStatus([
+                    'status_code' => $validated_data['status_code'],
+                    'status_action' => 'Pesanan selesai',
+                    'status_comment' => 'Diselesaikan oleh ' . Auth::user()->name
+                ]);
+            } elseif ($validated_data['status_code'] == 6) {
+                $status = new OrderStatus([
+                    'status_code' => $validated_data['status_code'],
+                    'status_action' => 'Pesanan dikomplain',
+                    'status_comment' => $validated_data['status_comment']
+                ]);
+            }
+            $order->loadMissing('relatedStatuses')->relatedStatuses()->save($status);
+            $order->order_latest_status = $validated_data['status_code'];
+            $order->save();
+
+            DB::commit();
+
+            return back()->with('message', 'Pesanan Anda telah selesai. Terima kasih telah berbelanja di ' . config('app.name'));
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return back()->withErrors($e->getMessage(), $e->getCode());
+        }
     }
 
     /**

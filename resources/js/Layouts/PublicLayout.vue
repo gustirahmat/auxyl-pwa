@@ -1,5 +1,6 @@
 <template>
     <div>
+        <jet-banner />
         <div class="bg-auxyl-blue pb-32">
             <Disclosure as="nav" class="bg-auxyl-blue" v-slot="{ open }">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -28,8 +29,14 @@
                                 </div>
                             </div>
                             <div class="hidden md:block">
-                                <div v-if="canLogin" class="ml-4 flex items-center md:ml-6">
+                                <div v-if="$page.props.canLogin" class="ml-4 flex items-center md:ml-6 space-x-3">
                                     <template v-if="$page.props.user">
+                                        <inertia-link :href="route('cart.index')">
+                                            <button class="bg-auxyl-blue p-1 text-gray-400 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                                                <span class="sr-only">View carts</span>
+                                                <ShoppingCartIcon class="h-6 w-6" aria-hidden="true" />
+                                            </button>
+                                        </inertia-link>
                                         <button class="bg-auxyl-blue p-1 text-gray-400 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                                             <span class="sr-only">View notifications</span>
                                             <BellIcon class="h-6 w-6" aria-hidden="true" />
@@ -40,19 +47,9 @@
                                             <div>
                                                 <MenuButton class="max-w-xs bg-auxyl-blue rounded-full flex items-center text-sm">
                                                     <span class="sr-only">Open user menu</span>
-                                                    <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                                        <img class="h-8 w-8 rounded-full object-cover" :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name" />
+                                                    <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
+                                                        <img class="h-8 w-8 rounded-full object-cover" :src="'https://ui-avatars.com/api/?name=' + $page.props.user.name + '&color=7F9CF5&background=EBF4FF'" v-bind:alt="$page.props.user.name" />
                                                     </button>
-
-                                                    <span v-else class="inline-flex rounded-md">
-                                                        <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition">
-                                                            {{ $page.props.user.name }}
-
-                                                            <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                                            </svg>
-                                                        </button>
-                                                    </span>
                                                 </MenuButton>
                                             </div>
                                             <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
@@ -68,19 +65,31 @@
                                                 </MenuItems>
                                             </transition>
                                         </Menu>
+                                        <!-- Authentication -->
+                                        <form @submit.prevent="logout">
+                                            <button type="submit" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                                Log Out
+                                            </button>
+                                        </form>
                                     </template>
                                     <template v-else>
                                         <inertia-link :href="route('login')" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                             Log in
                                         </inertia-link>
 
-                                        <inertia-link v-if="canRegister" :href="route('register')" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                        <inertia-link v-if="$page.props.canRegister" :href="route('register')" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                             Register
                                         </inertia-link>
                                     </template>
                                 </div>
                             </div>
-                            <div class="-mr-2 flex md:hidden">
+                            <div class="flex md:hidden space-x-1">
+                                <inertia-link :href="route('cart.index')">
+                                    <button class="bg-auxyl-blue inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                                        <span class="sr-only">View carts</span>
+                                        <ShoppingCartIcon class="block h-6 w-6" aria-hidden="true" />
+                                    </button>
+                                </inertia-link>
                                 <!-- Mobile menu button -->
                                 <DisclosureButton class="bg-auxyl-blue inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                                     <span class="sr-only">Open main menu</span>
@@ -107,38 +116,56 @@
                         </template>
                     </div>
                     <div class="pt-4 pb-3 border-t border-auxyl-green">
-                        <div class="flex items-center px-5">
-                            <div class="flex-shrink-0">
-                                <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                        <template v-if="$page.props.user">
+                            <div class="flex items-center px-5">
+                                <div class="flex-shrink-0">
+                                    <img class="h-10 w-10 rounded-full" :src="'https://ui-avatars.com/api/?name=' + $page.props.user.name + '&color=7F9CF5&background=EBF4FF'" v-bind:alt="$page.props.user.name" />
+                                </div>
+                                <div class="ml-3">
+                                    <div class="text-base font-medium leading-none text-white">{{ $page.props.user.name }}</div>
+                                    <div class="text-sm font-medium leading-none text-gray-400">{{ $page.props.user.email }}</div>
+                                </div>
+                                <button class="ml-auto bg-auxyl-blue flex-shrink-0 p-1 text-gray-400 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                                    <span class="sr-only">View notifications</span>
+                                    <BellIcon class="h-6 w-6" aria-hidden="true" />
+                                </button>
                             </div>
-                            <div class="ml-3">
-                                <div class="text-base font-medium leading-none text-white">Tom Cook</div>
-                                <div class="text-sm font-medium leading-none text-gray-400">tom@example.com</div>
+                            <div class="mt-3 px-2 space-y-1">
+                                <inertia-link :href="route('profile.show')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
+                                    Profil Saya
+                                </inertia-link>
+                                <inertia-link :href="route('order.index')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
+                                    Daftar Pesanan
+                                </inertia-link>
+                                <!-- Authentication -->
+                                <form @submit.prevent="logout">
+                                    <button type="submit" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
+                                        Log Out
+                                    </button>
+                                </form>
                             </div>
-                            <button class="ml-auto bg-auxyl-blue flex-shrink-0 p-1 text-gray-400 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                <span class="sr-only">View notifications</span>
-                                <BellIcon class="h-6 w-6" aria-hidden="true" />
-                            </button>
-                        </div>
-                        <div class="mt-3 px-2 space-y-1">
-                            <inertia-link v-for="item in proproduct" :key="item.title" :href="item.url" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">{{ item.title }}</inertia-link>
-                        </div>
+                        </template>
+                        <template v-else>
+                            <inertia-link :href="route('login')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
+                                Log in
+                            </inertia-link>
+
+                            <inertia-link v-if="canRegister" :href="route('register')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
+                                Register
+                            </inertia-link>
+                        </template>
                     </div>
                 </DisclosurePanel>
             </Disclosure>
 
             <!-- Page Heading -->
             <header class="py-10" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl font-bold text-white">
-                        <slot name="header"></slot>
-                    </h1>
-                </div>
+                <slot name="header"></slot>
             </header>
         </div>
 
         <!-- Page Content -->
-        <main>
+        <main class="-mt-32">
             <slot></slot>
         </main>
     </div>
@@ -147,16 +174,17 @@
 <script>
 import { ref } from 'vue'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
+import { BellIcon, MenuIcon, ShoppingCartIcon, XIcon } from '@heroicons/vue/outline'
+import JetBanner from '@/Jetstream/Banner'
 
 const navigation = [
     {
         title: 'Beranda',
-        url: '/',
+        url: route('home'),
     },
     {
         title: 'Kategori',
-        url: '/kategori',
+        url: route('category.index'),
     },
     {
         title: 'Promo',
@@ -169,55 +197,10 @@ const proproduct = [
         url: route('profile.show'),
     },
     {
-        title: 'Log Out',
-        url: '/',
+        title: 'Daftar Pesanan',
+        url: route('order.index'),
     }
 ]
-const products = [
-    {
-        title: 'IMG_4985.HEIC',
-        size: '3.9 MB',
-        source:
-            'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
-    },
-    {
-        title: 'IMG_4985.HEIC',
-        size: '3.9 MB',
-        source:
-            'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
-    },
-    {
-        title: 'IMG_4985.HEIC',
-        size: '3.9 MB',
-        source:
-            'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
-    },
-    {
-        title: 'IMG_4985.HEIC',
-        size: '3.9 MB',
-        source:
-            'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
-    },
-    // More products...
-]
-const people = [
-    {
-        name: 'Leslie Alexander',
-        email: 'lesliealexander@example.com',
-        role: 'Co-Founder / CEO',
-        imageUrl:
-            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-        name: 'Leslie Alexander',
-        email: 'lesliealexander@example.com',
-        role: 'Co-Founder / CEO',
-        imageUrl:
-            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    // More people...
-]
-
 export default {
     name: 'PublicLayout',
     components: {
@@ -230,7 +213,9 @@ export default {
         MenuItems,
         BellIcon,
         MenuIcon,
+        ShoppingCartIcon,
         XIcon,
+        JetBanner
     },
     setup() {
         const open = ref(false)
@@ -238,15 +223,16 @@ export default {
         return {
             navigation,
             proproduct,
-            products,
-            people,
             open,
         }
     },
     props: {
         appName: String,
-        canLogin: Boolean,
-        canRegister: Boolean,
+    },
+    methods: {
+        logout() {
+            this.$inertia.post(route('logout'));
+        },
     },
 }
 </script>

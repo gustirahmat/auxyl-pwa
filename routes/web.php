@@ -21,7 +21,7 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', HomeController::class);
+Route::get('/', HomeController::class)->name('home');
 Route::resource('category', CategoryController::class);
 Route::resource('product', ProductController::class);
 Route::resource('promo', PromoController::class);
