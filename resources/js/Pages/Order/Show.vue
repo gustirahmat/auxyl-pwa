@@ -224,6 +224,9 @@
                                                         <inertia-link :href="route('product.show', product.product_id)"
                                                                       class="font-medium text-gray-900">
                                                             {{ product.related_product.product_name }}
+                                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-auxyl-green text-auxyl-blue" v-if="product.promo_id">
+                                                                Promo
+                                                            </span>
                                                         </inertia-link>
                                                     </div>
                                                     <div class="mt-1 text-sm text-gray-700">

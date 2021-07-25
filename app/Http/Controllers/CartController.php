@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\PromoProduct;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,16 +47,26 @@ class CartController extends Controller
     {
         try {
             $product = Product::findOrFail($request->product_id);
+            $price_selling = $product->price_selling;
+
+            $promo_product_id = null;
+            if ($request->has('promo_product_id')) {
+                $promo_product = PromoProduct::findOrFail($request->promo_product_id);
+                $promo_product_id = $promo_product->promo_product_id;
+                $price_selling = $promo_product->promo_price_selling;
+            }
             Cart::with('relatedProduct')->updateOrCreate(
                 [
                     'user_id' => Auth::id(),
-                    'product_id' => $product->product_id
+                    'product_id' => $product->product_id,
+                    'product_price' => $price_selling,
                 ],
                 [
                     'category_id' => $product->category_id,
                     'supplier_id' => $product->supplier_id,
-                    'product_price' => $product->price_selling,
-                    'cart_qty' => $request->cart_qty
+                    'cart_qty' => $request->cart_qty,
+                    'promo_id' => $request->has('promo_id') ? $request->promo_id : null,
+                    'promo_product_id' => $promo_product_id,
                 ]
             );
 

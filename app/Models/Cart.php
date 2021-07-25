@@ -22,6 +22,8 @@ class Cart extends Model
         'product_id',
         'product_price',
         'cart_qty',
+        'promo_id',
+        'promo_product_id',
     ];
 
     /**
@@ -44,5 +46,10 @@ class Cart extends Model
     public function relatedProduct(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'product_id')->withDefault();
+    }
+
+    public function relatedPromoProduct(): BelongsTo
+    {
+        return $this->belongsTo(PromoProduct::class, 'promo_product_id', 'promo_product_id')->withDefault();
     }
 }

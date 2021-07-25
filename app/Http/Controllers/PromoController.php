@@ -2,20 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Product;
 use App\Models\Promo;
+use App\Models\PromoProduct;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Inertia\Inertia;
 
 class PromoController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Inertia\Response
      */
     public function index()
     {
-        //
+        return Inertia::render('Promo/Index', [
+            'promo' => Promo::with('relatedProducts.relatedPhotos:product_id,image_url,image_alt_text')
+                ->whereDate('promo_started_at', '>=', today())
+                ->first()
+        ]);
     }
 
     /**
@@ -42,12 +50,19 @@ class PromoController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param Request $request
      * @param Promo $promo
-     * @return Response
+     * @return \Inertia\Response
      */
-    public function show(Promo $promo)
+    public function show(Request $request, Promo $promo)
     {
-        //
+        $promo_product = PromoProduct::findOrFail($request->promo_product_id);
+        $product = $promo_product->loadMissing('relatedProduct')->relatedProduct;
+
+        return Inertia::render('Promo/Show', [
+            'promo_product' => $promo_product,
+            'product' => $product->loadMissing('relatedCategory', 'relatedPhotos', 'relatedCart')
+        ]);
     }
 
     /**

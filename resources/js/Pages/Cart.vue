@@ -23,6 +23,9 @@
                                             <div class="p-2 sm:py-4 sm:px-6">
                                                 <p class="text-sm font-medium text-auxyl-blue truncate">
                                                     {{ cart.related_product.product_name }}
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-auxyl-green text-auxyl-blue" v-if="cart.promo_product_id">
+                                                        Promo
+                                                    </span>
                                                 </p>
                                                 <div class="mt-2 sm:flex sm:justify-between">
                                                     <div class="sm:flex">

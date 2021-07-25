@@ -111,10 +111,11 @@ class OrderController extends Controller
                 $product = $order->relatedProducts()->create([
                     'product_id' => $cart['product_id'],
                     'category_id' => $cart['category_id'],
+                    'promo_id' => $cart['promo_id'] ?? null,
                     'order_product_qty' => $cart['cart_qty'],
                     'order_product_price' => $cart['product_price'],
                     'order_product_subtotal' => $cart['product_price'] * $cart['cart_qty'],
-                    'order_product_buy' => $cart->relatedProduct->price_supplier,
+                    'order_product_buy' => $cart['promo_product_id'] ? $cart->relatedPromoProduct->promo_price_supplier : $cart->relatedProduct->price_supplier,
                 ]);
 
                 # get total summary
