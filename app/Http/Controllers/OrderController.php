@@ -114,6 +114,7 @@ class OrderController extends Controller
                     'order_product_qty' => $cart['cart_qty'],
                     'order_product_price' => $cart['product_price'],
                     'order_product_subtotal' => $cart['product_price'] * $cart['cart_qty'],
+                    'order_product_buy' => $cart->relatedProduct->price_supplier,
                 ]);
 
                 # get total summary

@@ -31,6 +31,7 @@ class OrderProduct extends Model
         'order_product_qty',
         'order_product_price',
         'order_product_subtotal',
+        'order_product_buy',
     ];
 
     /**
