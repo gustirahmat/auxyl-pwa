@@ -95,25 +95,25 @@ class OrderController extends Controller
             $supplier_id = null;
             $carts = Cart::with('relatedProduct')->where('user_id', '=', Auth::id());
             foreach ($carts->get() as $cart) {
-                if ($cart->relatedProduct->product_stock - $cart->cart_qty < 0) {
-                    return back()->withErrors('Anda tidak dapat melanjutkan pesanan karena pesanan Anda melebihi stok yang kami sediakan.', 404);
-                }
                 // Kurangi stok
-                $cart->relatedProduct->product_stock = $cart->relatedProduct->product_stock - $cart->cart_qty;
-                $cart->relatedProduct->save();
-                $stock = new ProductStock([
-                    'stock_qty' => $cart->cart_qty,
-                    'stock_status' => false,
-                    'stock_notes' => 'Pesanan baru #' . $order->order_no . ' ' . Auth::user()->name . ' ' . $cart->cart_qty . ' pcs',
-                ]);
-                $cart->relatedProduct->relatedStocks()->save($stock);
-
                 if ($cart['promo_product_id']) {
                     if ($cart->relatedPromoProduct->promo_product_stock - $cart->cart_qty < 0) {
                         return back()->withErrors('Anda tidak dapat melanjutkan pesanan karena pesanan Anda melebihi stok yang kami sediakan.', 404);
                     }
                     $cart->relatedPromoProduct->promo_product_stock = $cart->relatedPromoProduct->promo_product_stock - $cart->cart_qty;
                     $cart->relatedPromoProduct->save();
+                } else {
+                    if ($cart->relatedProduct->product_stock - $cart->cart_qty < 0) {
+                        return back()->withErrors('Anda tidak dapat melanjutkan pesanan karena pesanan Anda melebihi stok yang kami sediakan.', 404);
+                    }
+                    $cart->relatedProduct->product_stock = $cart->relatedProduct->product_stock - $cart->cart_qty;
+                    $cart->relatedProduct->save();
+                    $stock = new ProductStock([
+                        'stock_qty' => $cart->cart_qty,
+                        'stock_status' => false,
+                        'stock_notes' => 'Pesanan baru #' . $order->order_no . ' ' . Auth::user()->name . ' ' . $cart->cart_qty . ' pcs',
+                    ]);
+                    $cart->relatedProduct->relatedStocks()->save($stock);
                 }
 
                 $product = $order->relatedProducts()->create([
