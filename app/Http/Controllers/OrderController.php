@@ -108,6 +108,14 @@ class OrderController extends Controller
                 ]);
                 $cart->relatedProduct->relatedStocks()->save($stock);
 
+                if ($cart['promo_product_id']) {
+                    if ($cart->relatedPromoProduct->promo_product_stock - $cart->cart_qty < 0) {
+                        return back()->withErrors('Anda tidak dapat melanjutkan pesanan karena pesanan Anda melebihi stok yang kami sediakan.', 404);
+                    }
+                    $cart->relatedPromoProduct->promo_product_stock = $cart->relatedPromoProduct->promo_product_stock - $cart->cart_qty;
+                    $cart->relatedPromoProduct->save();
+                }
+
                 $product = $order->relatedProducts()->create([
                     'product_id' => $cart['product_id'],
                     'category_id' => $cart['category_id'],
