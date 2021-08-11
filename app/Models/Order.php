@@ -96,7 +96,7 @@ class Order extends Model
             return 'Pesanan dikomplain';
         }
 
-        return 'Pesanan diproses';
+        return 'Pesanan dibatalkan';
     }
 
     protected $with = ['relatedProducts.relatedProduct', 'relatedProducts.relatedPhotos'];
