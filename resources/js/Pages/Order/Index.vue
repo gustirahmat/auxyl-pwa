@@ -2,7 +2,7 @@
   <public-layout>
     <template #header>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-white">Daftar Pesanan Saya</h1>
+        <h1 class="text-3xl font-bold text-white">Daftar Pesanan Sayaa</h1>
       </div>
     </template>
 
@@ -12,7 +12,7 @@
           <div class="bg-white shadow overflow-hidden sm:rounded-md">
             <template v-if="totalOrders">
               <ul class="divide-y divide-gray-200">
-                <li v-for="order in orders" :key="order.order_id.reverse()">
+                <li v-for="order in orders" :key="order.order_id">
                   <inertia-link
                     :href="route('order.show', order.order_id)"
                     class="block hover:bg-gray-50"
