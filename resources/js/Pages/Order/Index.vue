@@ -12,7 +12,10 @@
           <div class="bg-white shadow overflow-hidden sm:rounded-md">
             <template v-if="totalOrders">
               <ul class="divide-y divide-gray-200">
-                <li v-for="order in orders" :key="order.order_id">
+                <li
+                  v-for="order in orders.slice().reverse()"
+                  :key="order.order_id"
+                >
                   <inertia-link
                     :href="route('order.show', order.order_id)"
                     class="block hover:bg-gray-50"
